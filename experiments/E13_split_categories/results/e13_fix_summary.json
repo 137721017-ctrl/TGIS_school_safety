@@ -1,0 +1,52 @@
+{
+  "grid": {
+    "cells": 26375,
+    "events_drug_alcohol": 801629,
+    "events_traffic": 331153,
+    "zero_ratio_drug_alcohol": 0.2869383886255924,
+    "zero_ratio_traffic": 0.3393744075829384,
+    "year_sum_equals_total": true
+  },
+  "verify_vs_existing_e13": {
+    "rows_new": 26375,
+    "rows_existing": 26375,
+    "matched_rows": 26375,
+    "cells_with_different_counts": 17424,
+    "only_new": 0,
+    "only_old": 0
+  },
+  "year_table": {
+    "rows": 26375,
+    "cols": 46
+  },
+  "split_rerun": {
+    "y_drug_alcohol": {
+      "AUC": 0.7290926364559203,
+      "R2_pos": 0.3480399250984192
+    },
+    "y_traffic": {
+      "AUC": 0.7155240038269546,
+      "R2_pos": -0.2094324827194214
+    }
+  },
+  "temporal": {
+    "AUC_full_all": 0.7390688415329298,
+    "PR_AUC_full_all": 0.5717203582501938,
+    "AUC_history_only_all": 0.7031088310093835,
+    "AUC_full_sub": 0.7111400295539667,
+    "AUC_history_only_sub": 0.7054017292645327,
+    "delta_all": 0.03596001052354636,
+    "delta_sub": 0.005738300289434006,
+    "pos_rate_late": 0.34312796208530805,
+    "pos_rate_early": 0.7025592417061611,
+    "n_eval_all": 26375,
+    "train_years": "2006—2018",
+    "test_years": "2019—2024",
+    "n_train_years": 13,
+    "n_test_years": 6
+  },
+  "random_80_20_drug_alcohol": {
+    "AUC": 0.7290926364559203,
+    "PR_AUC": 0.8509058628486333
+  }
+}

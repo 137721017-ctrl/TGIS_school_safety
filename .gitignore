@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+.DS_Store
+~$*
+data/_linked_raw/
+data/01_base/
+data/02_paper/
+data/04_external/
+*.tif

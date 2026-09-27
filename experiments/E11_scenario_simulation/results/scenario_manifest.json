@@ -1,0 +1,76 @@
+{
+  "seeds": [
+    42,
+    7,
+    2024,
+    101,
+    555
+  ],
+  "algos": [
+    "xgb",
+    "lgbm",
+    "rf"
+  ],
+  "n_boot": 500,
+  "radius": 300,
+  "cases": [
+    {
+      "case": "纽约·财产犯罪",
+      "target": "y_property",
+      "scenarios": [
+        {
+          "lever": "ratio_Enclosure_degree_r300",
+          "direction": "down",
+          "label": "降低围合度（改善视觉通透性）"
+        },
+        {
+          "lever": "ratio_Street_furniture_r300",
+          "direction": "down",
+          "label": "清理占道人行道的设施"
+        },
+        {
+          "lever": "shop_density_r300",
+          "direction": "down",
+          "label": "减少沿街商业外摆与停车占用"
+        }
+      ]
+    },
+    {
+      "case": "纽约·暴力犯罪",
+      "target": "y_violent",
+      "scenarios": [
+        {
+          "lever": "ratio_Enclosure_degree_r300",
+          "direction": "down",
+          "label": "降低围合度（改善视觉通透性）"
+        },
+        {
+          "lever": "ratio_Street_furniture_r300",
+          "direction": "down",
+          "label": "清理占道人行道的设施"
+        },
+        {
+          "lever": "shop_density_r300",
+          "direction": "down",
+          "label": "减少沿街商业外摆与停车占用"
+        }
+      ]
+    },
+    {
+      "case": "香港·交通事故",
+      "target": "event_count",
+      "scenarios": [
+        {
+          "lever": "ratio_Street_furniture_r300",
+          "direction": "down",
+          "label": "清理占道人行道的设施"
+        },
+        {
+          "lever": "shop_density_r300",
+          "direction": "down",
+          "label": "减少沿街商业外摆与停车占用"
+        }
+      ]
+    }
+  ]
+}

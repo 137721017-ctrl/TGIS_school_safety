@@ -1,0 +1,11 @@
+﻿city,radius,figure
+ny,100,F:\schoolsafety\experiments\E01_multiscale_buffer\results\figures\ny_curves_r100_full.png
+ny,200,F:\schoolsafety\experiments\E01_multiscale_buffer\results\figures\ny_curves_r200_full.png
+ny,300,F:\schoolsafety\experiments\E01_multiscale_buffer\results\figures\ny_curves_r300_full.png
+ny,400,F:\schoolsafety\experiments\E01_multiscale_buffer\results\figures\ny_curves_r400_full.png
+ny,500,F:\schoolsafety\experiments\E01_multiscale_buffer\results\figures\ny_curves_r500_full.png
+hk,100,F:\schoolsafety\experiments\E01_multiscale_buffer\results\figures\hk_curves_r100_full.png
+hk,200,F:\schoolsafety\experiments\E01_multiscale_buffer\results\figures\hk_curves_r200_full.png
+hk,300,F:\schoolsafety\experiments\E01_multiscale_buffer\results\figures\hk_curves_r300_full.png
+hk,400,F:\schoolsafety\experiments\E01_multiscale_buffer\results\figures\hk_curves_r400_full.png
+hk,500,F:\schoolsafety\experiments\E01_multiscale_buffer\results\figures\hk_curves_r500_full.png
