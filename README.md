@@ -3,14 +3,18 @@
 Micro-scale environmental correlates of school-area crime and traffic incidents:
 street-view evidence from New York and Hong Kong
 
-## 1. 内容
+## 1. 仓库内容
 
 | 目录 | 内容 |
 | --- | --- |
-| `code/` | 全部实验代码（预处理、特征构建、建模、分析） |
-| `experiments/` | 派生数据集与结果表：E01 多尺度、E13 类别拆分与时间窗、E11 干预情景模拟 |
-| `DATA_DICTIONARY.md` | 数据字典（核心数据集说明 + 逐文件清单） |
-| `data/` | 原始输入，因许可限制未随库分发，见 `data/README.md` |
+| `code/` | 全部实验代码：预处理、特征构建、两阶段 Hurdle 建模与稳健性分析 |
+| `experiments/` | 论文使用的派生数据集与结果表（E01 多尺度、E11 情景模拟、E13 拆分因变量） |
+| `DATA_DICTIONARY.md` | 数据字典：核心数据集说明与逐文件清单 |
+| `data/` | 原始输入，因许可与体量限制未随库分发，见 `data/README.md` |
+
+仓库约 180 MB、162 个文件，最大单文件约 21 MB，直接 push 即可，不需要 Git LFS；
+原始输入（约 130 GB）不随仓库分发。逐文件说明与「结果 ↔ 论文图表」对应表见
+[`experiments/README.md`](experiments/README.md)。
 
 ## 2. 运行环境
 
@@ -62,10 +66,31 @@ code/
 | POI 与路网 | OpenStreetMap | 2019 年 7 月 |
 | 人口 | LandScan USA 2021 昼/夜人口栅格 | 2021 |
 
-## 6. 说明
+## 6. 原始数据与获取方式
 
-- 数据集约 200 MB；如需上传 GitHub，建议使用 Git LFS 或随论文发布 Zenodo release。
+仓库只包含代码、派生数据集与结果表，原始输入因许可与体量限制未随库分发：
+
+| 数据 | 获取方式 |
+| --- | --- |
+| 纽约逮捕记录（2006—2024） | NYC Open Data 的 NYPD Arrest Data (Historic) 公开数据集 |
+| 香港交通事故（2014—2019） | 香港特别行政区政府运输署；再分发受限，仓库只提供聚合后的 100 m 格网计数 |
+| 街景影像 | Google Street View API（纽约）、腾讯地图街景 API（香港），按各自服务条款获取 |
+| POI 与路网 | OpenStreetMap（2019 年 7 月快照，ODbL） |
+| 人口栅格 | LandScan USA 2021（纽约）；香港使用配套的 10 m 人口栅格 |
+
+把原始文件按 `data/README.md` 的布局放好后即可运行。`code/01_preprocess/` 下的 notebook 是论文
+原始工作副本，内部保留了当时的绝对路径（`E:/chuli/...`、`F:/schoolsafety/...`），如需重跑可批量替换：
+
+```powershell
+Get-ChildItem code -Recurse -Include *.ipynb | ForEach-Object {
+  (Get-Content $_ -Raw) -replace 'F:/schoolsafety/data', 'D:/myrepo/data' | Set-Content $_ -Encoding UTF8
+}
+```
+
+## 7. 说明
+
 - 代码注释为中文，必要处保留英文术语；如需英文注释版本可另行处理。
 - 情景模拟输出的是模型在假设设计状态下的隐含变化，不等同于干预效果估计。
 - `experiments/E13_split_categories/results/e13_格网构建bug修正记录.md` 记录了格网级时间窗脚本中
   特征合并键错误与输出文件名硬编码两个 bug 的修正过程与逐格网核对结果。
+- 基准尺度 300 m 的核心规模：纽约 26,375 个格网、3,962,951 起事件；香港 15,564 个格网、63,831 起事故。

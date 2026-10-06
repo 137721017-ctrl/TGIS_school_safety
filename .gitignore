@@ -1,11 +1,25 @@
+# Python
 __pycache__/
 *.pyc
 *.pyo
+*.egg-info/
+.venv/
+venv/
+
+# 编辑器与系统文件
 .ipynb_checkpoints/
 .DS_Store
 ~$*
+.idea/
+.vscode/
+
+# 原始与中间数据：不随仓库分发，见 data/README.md
 data/_linked_raw/
 data/01_base/
 data/02_paper/
 data/04_external/
 *.tif
+
+# 运行产物
+outputs/
+*.log

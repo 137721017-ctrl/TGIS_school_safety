@@ -1,3 +1,6 @@
+# 论文分析使用的依赖版本（Python 3.11；原项目 conda 环境名为 geoKD_final）
+
+# 核心建模
 numpy==2.4.6
 pandas==3.0.3
 scipy==1.17.1
@@ -5,8 +8,12 @@ scikit-learn==1.9.0
 xgboost==3.2.0
 lightgbm==4.7.0
 statsmodels==0.15.0
-geopandas==1.1.4
+
+# 空间数据
+geopandas==1.1.4      # 读取街景点位 shapefile；01_preprocess 的 notebook 也需要
 rasterio==1.4.4
 pyproj==3.7.2
+
+# 出图
 matplotlib==3.10.9
 pillow==12.2.0
