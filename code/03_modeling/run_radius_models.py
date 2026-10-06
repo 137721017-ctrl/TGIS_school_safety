@@ -15,6 +15,10 @@ from config.settings import RADII, out_dir  # noqa: E402
 
 def merge_inputs(city: str, radius: int) -> pd.DataFrame:
     folder = out_dir(city)
+    combined = folder / ("%s_school_features_r%d.csv" % (city, radius))
+    if combined.exists():
+        # 合并表已经包含底表 + 街景 + 事件 + 栅格，直接使用可避免重复列后缀
+        return pd.read_csv(combined)
     parts = [folder / ("%s_svi_r%d.csv" % (city, radius)),
              folder / ("%s_events_r%d.csv" % (city, radius)),
              folder / ("%s_raster_r%d.csv" % (city, radius))]
@@ -95,10 +99,17 @@ def run(city: str, radius: int, spatial_cv: int = 0, target: str = "event_count"
     data = merge_inputs(city, radius)
     y_col = "%s_r%d" % (target, radius)
     if y_col not in data.columns:
-        candidates = [c for c in data.columns if c.startswith("event_count")]
-        if not candidates:
-            raise SystemExit("找不到因变量列：%s" % y_col)
-        y_col = candidates[0]
+        candidates = sorted(c for c in data.columns if c.startswith(y_col))
+        if candidates:
+            y_col = candidates[0]
+            print("  [提示] 因变量列 %s 不存在，改用 %s（合并产生的后缀列）" % (target, y_col),
+                  flush=True)
+        else:
+            fallback = sorted(c for c in data.columns if c.startswith("event_count"))
+            if not fallback:
+                raise SystemExit("找不到因变量列：%s" % y_col)
+            y_col = fallback[0]
+            print("  [提示] 因变量列 %s 不存在，改用 %s" % (target, y_col), flush=True)
     feature_cols = [c for c in data.columns
                     if c not in ("school_id", "school_lon", "school_lat", y_col)
                     and not c.startswith("count_") and not c.startswith("y_")]

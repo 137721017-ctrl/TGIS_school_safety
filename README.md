@@ -22,18 +22,35 @@ Python 3.11；依赖版本见 `requirements.txt`（原始项目使用 conda 环�
 code/
   config/settings.py       路径与参数；根目录默认为仓库根，可用 SCHOOLSAFETY_ROOT 覆盖
   01_preprocess/           事件分类、学校空间处理、POI 与人口栅格化（notebook，已去除输出）
-  02_features/             街景聚合、事件计数、栅格统计、格网数据集、稳健性套件、诊断与补充分析
+  02_features/             街景聚合、事件计数、栅格统计、格网数据集、稳健性套件、诊断与补充分析；
+                           assemble_summary.py 汇总 100—500 m 的 multiscale_summary.csv
   03_modeling/             按缓冲半径的两阶段 Hurdle 模型
-  analysis/                类别拆分、时间窗切分、干预情景模拟
+  analysis/                OFNS 拆分数据集与拆分实验套件、类别拆分、时间窗切分、干预情景模拟
 ```
 
 ## 4. 复现顺序
 
 1. 把原始输入按 `data/README.md` 的布局放入 `data/`，或设置 `SCHOOLSAFETY_ROOT` 指向含原始数据的项目根；
-2. `python code/02_features/run_multiscale_all.py` —— 重建 100—500 m 特征并训练格网级模型（输出 E01）；
-3. `python code/analysis/split_categories_by_class.py --class-name "Property crimes" --col y_property --radii 100,200,300,400,500 --name property` —— E13 类别拆分数据集；
-4. `python code/analysis/temporal_window_split.py --radius 300 --split-year 2018` —— 时间窗切分与配对 bootstrap；
-5. `python code/analysis/scenario_simulation.py` —— E11 干预情景模拟（可用 `SC_SEEDS`、`SC_ALGOS`、`SC_NBOOT`、`SC_OUT` 覆盖默认设置）。
+2. **E01 主干**（以纽约为例；香港把 `--city` 与 `--split-year` 换成 hk / 2017）：
+   `ms_svi_aggregate.py` → `ms_event_counts.py` → `ms_raster_stats.py` → `cell_level_pipeline.py`
+   → `robustness_suite.py --radius 300` → `run_multiscale_all.py` → `s6s5_suite.py`
+   → `extra_analyses.py` → `assemble_summary.py`；
+3. **E13 拆分口径**：`python code/analysis/e13_suite.py` —— 重建“毒品与酒精类 / 交通类”数据集、
+   多尺度与稳健性、消融、计数模型、暴露量、时间窗与配对 bootstrap、拆分对比表；
+4. **E11 干预情景模拟**：`python code/analysis/scenario_simulation.py`
+   （可用 `SC_SEEDS`、`SC_ALGOS`、`SC_NBOOT`、`SC_OUT` 覆盖默认设置）；
+5. 其他可选脚本：`split_categories_by_class.py`（按 `Crime_classification` 大类拆分）、
+   `temporal_window_split.py`（单一拆分目标的时间窗验证）。
+
+## 4.1 运行提示
+
+- 全流程在单机上约需 1—2 小时：`ms_event_counts.py` 对每个半径都会重新读取全部事件点，
+  `ms_svi_aggregate.py` 对每个半径都会重新聚合全部街景比例表；`run_multiscale_all.py` 只读一次、
+  速度更快，但仅覆盖 100/200/400/500 m，基准尺度 300 m 需单独运行。
+- 空间分块交叉验证使用 `sklearn.cluster.KMeans`。在受限沙箱或无桌面会话中，`threadpoolctl`
+  可能因无法加载 MKL/OpenMP 动态库而抛出 `OSError 0xc06d007f`；改用普通交互会话运行即可。
+- 学校级合并表同时写出 `{city}_school_features_r{r}.csv`（规范名）与 `{city}_svi_r{r}.csv`
+  （旧名，向后兼容）。
 
 ## 5. 数据来源
 

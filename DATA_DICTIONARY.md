@@ -9,6 +9,8 @@
 | `experiments/E01_multiscale_buffer/data/ny_cells_r{100..500}.csv` | 4,155 / 14,374 / 26,375 / 37,617 / 47,147 × 46 | 纽约 100 m 格网级数据集：因变量为缓冲区内全部犯罪事件计数（含逐年列 `y_YYYY`），自变量为 19 个环境特征 |
 | `experiments/E01_multiscale_buffer/data/hk_cells_r{100..500}.csv` | 4,431 / 10,516 / 15,564 / 20,263 / 24,743 × 30 | 香港 100 m 格网级数据集：因变量为交通事故计数，自变量为 17 个环境特征 |
 | `experiments/E01_multiscale_buffer/data/{ny,hk}_svi_r{r}.csv` | 学校级 | 街景指标按学校与半径聚合（影像级比例→全景→缓冲均值） |
+| `experiments/E01_multiscale_buffer/data/{ny,hk}_school_features_r{r}.csv` | 学校级 | 底表＋街景＋事件＋栅格的合并特征表（`run_multiscale_all.py` 写出的规范名） |
+| `experiments/E01_multiscale_buffer/data/{ny,hk}_svi_r{r}.csv` | 学校级 | r=300 为纯街景指标表；其余半径沿用旧名保存合并表（向后兼容，建议改用 school_features） |
 | `experiments/E01_multiscale_buffer/data/{ny,hk}_events_r{r}.csv` | 学校级 | 学校在各半径内的事件计数（含按年与按罪名分解列） |
 | `experiments/E01_multiscale_buffer/data/{ny,hk}_raster_r{r}.csv` | 学校级 | 连续栅格（密度核、路网、人口）的缓冲均值 |
 | `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r{100..500}.csv` | 同 E01，纽约 | 因变量换为“毒品与酒精相关违法”计数 |
@@ -29,6 +31,8 @@
 | `.../results/diagnostics_scale_table.csv` | 残差 Moran's I、top-k 命中率、SHAP 跨折稳定性 |
 | `.../results/figures/*.csv`、`*.png` | 校准曲线与 PR 曲线的数据点与图件 |
 | `experiments/E13_split_categories/results/split_targets_r300.csv` | 拆分后两类的完整指标（含空间分块均值） |
+| `experiments/E13_split_categories/data/ny_cells_split_r300.csv`、`ny_cells_drug_alcohol_r{100..500}.csv` | NYPD `OFNS_DESC` 分组计数的格网数据集，由 `code/analysis/ofns_split.py` 生成；分组定义见 `code/config/settings.py` 的 `OFNS_GROUPS` |
+| `experiments/E13_split_categories/results/drug_alcohol_*.csv`、`split_targets_r300*.csv/json` | 拆分口径的多尺度、稳健性、诊断、消融、计数模型、暴露量与时间窗结果，由 `code/analysis/e13_suite.py` 生成 |
 | `.../results/drug_alcohol_multiscale.csv`、`..._full_diagnostics.csv`、`..._ablation.csv`、`..._count_models.csv`、`..._exposure.csv` | 毒品与酒精类的多尺度、诊断、消融、计数模型与暴露量结果 |
 | `.../results/{drug_alcohol_temporal.csv,drug_alcohol_temporal_bootstrap.csv}` | 时间窗切分与配对 bootstrap |
 | `.../results/e13_格网构建bug修正记录.md`、`e13_fix_summary.json`、`e13_fix_verification.csv` | 格网构建 bug 的修正记录与逐格网核对结果 |

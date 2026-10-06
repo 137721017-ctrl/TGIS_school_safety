@@ -311,6 +311,52 @@ def make_figure(summary):
     print("  figure:", FIG / "fig_scenario_effects.png", flush=True)
 
 
+def make_main_figure(agg):
+    """正文用两面板图：左纽约暴力犯罪、右香港交通事故（分位数整改口径）。"""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    en_scenario = {
+        "清理占道人行道的设施": "Clear space-occupying sidewalk facilities",
+        "减少沿街商业外摆与停车占用": "Limit shop frontage and parking",
+        "降低围合度（改善视觉通透性）": "Reduce enclosure (enhance visibility)",
+        "组合情景（全部措施）": "Combined package",
+    }
+    cases = [
+        ("纽约·暴力犯罪", "New York: violent crime",
+         ["清理占道人行道的设施", "减少沿街商业外摆与停车占用",
+          "降低围合度（改善视觉通透性）", "组合情景（全部措施）"]),
+        ("香港·交通事故", "Hong Kong: traffic accidents",
+         ["清理占道人行道的设施", "减少沿街商业外摆与停车占用", "组合情景（全部措施）"]),
+    ]
+    q = agg[agg["method"] == "quartile"]
+    fig, axes = plt.subplots(1, 2, figsize=(11.2, 4.2))
+    for ax, (city, title, order) in zip(axes, cases):
+        sub = q[q.city == city].set_index("scenario").loc[order].reset_index()
+        y = np.arange(len(sub))
+        err = np.vstack([sub.delta_pct - sub.delta_pct_min,
+                         sub.delta_pct_max - sub.delta_pct])
+        ax.barh(y, sub.delta_pct, xerr=err, color="#4C72B0", alpha=.85, height=.55,
+                error_kw=dict(ecolor="#444", lw=1, capsize=3))
+        ax.set_yticks(y)
+        ax.set_yticklabels([en_scenario.get(s, s) for s in sub.scenario], fontsize=9)
+        ax.axvline(0, color="#888", lw=.8)
+        ax.set_xlabel("Change in predicted incidents (%)", fontsize=9)
+        ax.set_title(title, fontsize=10)
+        lim = max(abs(sub.delta_pct_min).max(), abs(sub.delta_pct_max).max()) * 1.4 + 1
+        ax.set_xlim(-lim, lim)
+        for i, v in enumerate(sub.delta_pct):
+            ax.text(v + (0.3 if v >= 0 else -0.3), i, "%+.1f%%" % v, va="center",
+                    ha="left" if v >= 0 else "right", fontsize=8)
+    fig.suptitle("Bars = mean of 15 models (5 seeds x 3 algorithms); whiskers = min-max",
+                 fontsize=9, y=0.02)
+    fig.tight_layout(rect=(0, 0.05, 1, 1))
+    fig.savefig(FIG / "fig_scenario_main.png", dpi=220)
+    plt.close(fig)
+    print("  figure:", FIG / "fig_scenario_main.png", flush=True)
+
+
 def main():
     feat = pd.read_csv(E01 / "ny_cells_r300.csv")
     key = ["school_id", "cell_x", "cell_y"]
@@ -370,6 +416,7 @@ def main():
     agg.to_csv(RES / "scenario_summary.csv", index=False, encoding="utf-8-sig")
     print(agg.round(2).to_string(index=False), flush=True)
     make_figure(agg)
+    make_main_figure(agg)
     write_note(agg)
     (RES / "scenario_manifest.json").write_text(json.dumps(
         {"seeds": SEEDS, "algos": ALGOS, "n_boot": NBOOT, "radius": RADIUS,

@@ -125,9 +125,13 @@ def main():
         ev = events_all(city, sx, sy, TARGET_RADII)
         ras = raster_all(city, schools, TARGET_RADII)
         for r in TARGET_RADII:
-            pd.concat([base, svi[r], ev[r], ras[r]], axis=1).to_csv(
-                out_dir(city) / ("%s_svi_r%d.csv" % (city, r)), index=False,
-                encoding="utf-8-sig")
+            school = pd.concat([base, svi[r], ev[r], ras[r]], axis=1)
+            # 规范的学校级特征表：底表 + 街景 + 事件 + 栅格
+            school.to_csv(out_dir(city) / ("%s_school_features_r%d.csv" % (city, r)),
+                          index=False, encoding="utf-8-sig")
+            # 兼容旧文件名：历史上把合并表写进了 *_svi_*，保留同名副本以免打断既有脚本
+            school.to_csv(out_dir(city) / ("%s_svi_r%d.csv" % (city, r)),
+                          index=False, encoding="utf-8-sig")
             (out_dir(city) / ("%s_raster_r%d.csv" % (city, r))).unlink(missing_ok=True)
             cells = build_cells(city, r)
             cell_model(city, r)
@@ -155,10 +159,9 @@ def main():
                 "temporal_AUC": float(tbl.loc[tbl.scheme.str.startswith("temporal"), "AUC"].mean()) if t else np.nan})
             print("  完成 %s r=%d cells=%d zero=%.3f" % (city, r, len(cells),
                                                         float((y == 0).mean())), flush=True)
-    out = out_dir("ny", "results") / "multiscale_summary.csv"
-    pd.DataFrame(summary).to_csv(out, index=False, encoding="utf-8-sig")
-    print(pd.DataFrame(summary).to_string(index=False), flush=True)
-    print("written:", out, flush=True)
+    # 汇总交给 assemble_summary.py，保证基准尺度 300 m 也被纳入（本脚本只覆盖其余半径）
+    from assemble_summary import main as assemble_summary
+    assemble_summary()
 
 
 if __name__ == "__main__":

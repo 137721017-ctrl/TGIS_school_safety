@@ -97,6 +97,25 @@ EVENT_YEAR_COLUMN = "ARREST_DATE"
 EVENT_LON_COLUMN = "longitude"
 EVENT_LAT_COLUMN = "latitude"
 
+# ---------------------------------------------- E13 拆分因变量的 OFNS 分组
+# 论文正文把 NYPD 的 11 个 OFNS_DESC 类别合并为“毒品、酒精与交通类违法”。
+# E13 拆分分析把该合并类别还原为两组：group_a 为毒品与酒精类，group_b 为交通类
+# （含酒驾与毒驾）。分组口径与增补 S3 表 3.1、表 3.2 完全一致。
+OFNS_GROUPS = {
+    "a": ["DANGEROUS DRUGS",
+          "CANNABIS RELATED OFFENSES",
+          "ALCOHOLIC BEVERAGE CONTROL LAW",
+          "LOITERING FOR DRUG PURPOSES",
+          "UNDER THE INFLUENCE, DRUGS"],
+    "b": ["VEHICLE AND TRAFFIC LAWS",
+          "MOVING INFRACTIONS",
+          "OTHER TRAFFIC INFRACTION",
+          "PARKING OFFENSES",
+          "INTOXICATED & IMPAIRED DRIVING",
+          "INTOXICATED/IMPAIRED DRIVING"],
+}
+OFNS_GROUP_LABELS = {"a": "y_drug_alcohol", "b": "y_traffic"}
+
 
 def out_dir(city: str, kind: str = "data") -> Path:
     """返回实验输出目录：experiments/E01_multiscale_buffer/<kind>/"""

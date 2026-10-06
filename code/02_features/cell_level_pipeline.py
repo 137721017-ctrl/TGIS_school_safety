@@ -75,8 +75,14 @@ def build_cells(city: str, radius: int) -> pd.DataFrame:
         print("  year columns: %d" % len([c for c in cells.columns if c.startswith("y_")]), flush=True)
     print("  events in cells: %d, zero-cell ratio %.3f"
           % (int(cells["event_count"].sum()), float((cells["event_count"] == 0).mean())), flush=True)
-    for path in [out_dir(city) / ("%s_svi_r%d.csv" % (city, radius)),
-                 out_dir(city) / ("%s_raster_r%d.csv" % (city, radius))]:
+    # 学校级特征：优先读取合并表 school_features，缺失时退回街景表 + 栅格表
+    combined = out_dir(city) / ("%s_school_features_r%d.csv" % (city, radius))
+    if combined.exists():
+        feature_files = [combined]
+    else:
+        feature_files = [out_dir(city) / ("%s_svi_r%d.csv" % (city, radius)),
+                         out_dir(city) / ("%s_raster_r%d.csv" % (city, radius))]
+    for path in feature_files:
         if not path.exists():
             print("  [warn] missing feature file: %s" % path, flush=True)
             continue
