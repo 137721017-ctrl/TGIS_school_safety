@@ -1,48 +1,51 @@
-# Data dictionary. 数据字典
+# Data dictionary
 
-所有派生数据集与结果表都在 `experiments/` 下；原始输入（逮捕记录、街景影像点位、栅格）因许可限制不在库内，见 `data/README.md`。
+All derived datasets and result tables are stored under `experiments/`. Raw inputs (arrest records, street-view image points, rasters) are not distributed with the repository because of licence and size restrictions; see section 4 of `README.md` for the list of required files and how to obtain them.
 
-## 1. 核心数据集
+## 1. Core datasets
 
-| 路径 | 行 × 列 | 内容 |
+| Path | Level | Contents |
 | --- | --- | --- |
-| `experiments/E01_multiscale_buffer/data/ny_cells_r{100..500}.csv` | 4,155 / 14,374 / 26,375 / 37,617 / 47,147 × 46 | 纽约 100 m 格网级数据集：因变量为缓冲区内全部犯罪事件计数（含逐年列 `y_YYYY`），自变量为 19 个环境特征 |
-| `experiments/E01_multiscale_buffer/data/hk_cells_r{100..500}.csv` | 4,431 / 10,516 / 15,564 / 20,263 / 24,743 × 30 | 香港 100 m 格网级数据集：因变量为交通事故计数，自变量为 17 个环境特征 |
-| `experiments/E01_multiscale_buffer/data/{ny,hk}_svi_r{r}.csv` | 学校级 | 街景指标按学校与半径聚合（影像级比例→全景→缓冲均值） |
-| `experiments/E01_multiscale_buffer/data/{ny,hk}_school_features_r{r}.csv` | 学校级 | 底表＋街景＋事件＋栅格的合并特征表（`run_multiscale_all.py` 写出的规范名） |
-| `experiments/E01_multiscale_buffer/data/{ny,hk}_svi_r{r}.csv` | 学校级 | r=300 为纯街景指标表；其余半径沿用旧名保存合并表（向后兼容，建议改用 school_features） |
-| `experiments/E01_multiscale_buffer/data/{ny,hk}_events_r{r}.csv` | 学校级 | 学校在各半径内的事件计数（含按年与按罪名分解列） |
-| `experiments/E01_multiscale_buffer/data/{ny,hk}_raster_r{r}.csv` | 学校级 | 连续栅格（密度核、路网、人口）的缓冲均值 |
-| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r{100..500}.csv` | 同 E01，纽约 | 因变量换为“毒品与酒精相关违法”计数 |
-| `experiments/E13_split_categories/data/ny_cells_split_r300.csv` | 26,375 × 28 | 纽约 300 m 格网级拆分数据集（`y_drug_alcohol`、`y_traffic`） |
-| `experiments/E13_split_categories/data/ny_cells_property_r300.csv` | 26,375 × 28 | 财产犯罪（`y_property`）格网计数 |
-| `experiments/E13_split_categories/data/ny_cells_violent_r300.csv` | 26,375 × 28 | 暴力犯罪（`y_violent`）格网计数 |
-| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_year_r300.csv` | 26,375 × 46 | 毒品与酒精类 + 逐年计数（`count_2006`—`count_2024`），用于时间窗验证 |
+| `experiments/E01_multiscale_buffer/data/ny_cells_r{100..500}.csv` | 100 m grid | New York grid-level dataset: all crime events within the school buffer as the dependent variable (yearly columns `y_YYYY`), plus 19 environmental features. Grid counts per radius: 4,155 / 14,374 / 26,375 / 37,617 / 47,147. |
+| `experiments/E01_multiscale_buffer/data/hk_cells_r{100..500}.csv` | 100 m grid | Hong Kong grid-level dataset: traffic accident counts as the dependent variable, plus 17 environmental features. Grid counts per radius: 4,431 / 10,516 / 15,564 / 20,263 / 24,743. |
+| `experiments/E01_multiscale_buffer/data/{ny,hk}_school_features_r{r}.csv` | school | Merged school-level feature table (base table + street-view + events + rasters) written by `run_multiscale_all.py`; canonical name. |
+| `experiments/E01_multiscale_buffer/data/{ny,hk}_svi_r{r}.csv` | school | Street-view indicators aggregated per school and radius (image-level ratios to panorama, then buffer mean). For r = 300 this is the pure street-view table; for the other radii the legacy name still holds the merged table (kept for backwards compatibility, prefer `school_features`). |
+| `experiments/E01_multiscale_buffer/data/{ny,hk}_events_r{r}.csv` | school | Event counts per school and radius, with yearly and offence-type breakdowns. |
+| `experiments/E01_multiscale_buffer/data/{ny,hk}_raster_r{r}.csv` | school | Buffer means of the continuous rasters (kernel densities, road network, population); r = 300 only. |
+| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r{100..500}.csv` | 100 m grid | As the E01 New York grids, but the dependent variable is the count of drugs- and alcohol-related offences; each radius uses the features recomputed at that radius. |
+| `experiments/E13_split_categories/data/ny_cells_split_r300.csv` | 100 m grid | New York 300 m split dataset carrying both targets (`y_drug_alcohol`, `y_traffic`). |
+| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_year_r300.csv` | 100 m grid | Drugs and alcohol counts plus one column per year, used for the temporal-window validation. |
+| `experiments/E11_scenario_simulation/results/ny_cells_property_r300.csv` | 100 m grid | Property-crime grid counts used by the scenario simulation. |
+| `experiments/E11_scenario_simulation/results/ny_cells_violent_r300.csv` | 100 m grid | Violent-crime grid counts used by the scenario simulation. |
 
-## 2. 结果表
+Exact row and column counts for every file are listed in section 3.
 
-| 路径 | 内容 |
+## 2. Result tables
+
+| Path | Contents |
 | --- | --- |
-| `experiments/E01_multiscale_buffer/results/multiscale_summary.csv` | 两城 × 五尺度的格网数、零值比例、随机/空间分块/时间窗 AUC |
-| `.../results/algo_scale_table.csv` | 三算法 × 五尺度完整指标（含 PR-AUC、Brier、top-k） |
-| `.../results/ablation_scale_table.csv` | 七组消融 × 两城 × 五尺度 + 配对 bootstrap |
-| `.../results/count_model_comparison.csv` | Hurdle 与 Poisson/NB/ZIP/ZINB/单阶段树比较 |
-| `.../results/exposure_second_stage.csv` | 计数与事件率目标的第二阶段 R²/MAE |
-| `.../results/diagnostics_scale_table.csv` | 残差 Moran's I、top-k 命中率、SHAP 跨折稳定性 |
-| `.../results/figures/*.csv`、`*.png` | 校准曲线与 PR 曲线的数据点与图件 |
-| `experiments/E13_split_categories/results/split_targets_r300.csv` | 拆分后两类的完整指标（含空间分块均值） |
-| `experiments/E13_split_categories/data/ny_cells_split_r300.csv`、`ny_cells_drug_alcohol_r{100..500}.csv` | NYPD `OFNS_DESC` 分组计数的格网数据集，由 `code/analysis/ofns_split.py` 生成；分组定义见 `code/config/settings.py` 的 `OFNS_GROUPS` |
-| `experiments/E13_split_categories/results/drug_alcohol_*.csv`、`split_targets_r300*.csv/json` | 拆分口径的多尺度、稳健性、诊断、消融、计数模型、暴露量与时间窗结果，由 `code/analysis/e13_suite.py` 生成 |
-| `.../results/drug_alcohol_multiscale.csv`、`..._full_diagnostics.csv`、`..._ablation.csv`、`..._count_models.csv`、`..._exposure.csv` | 毒品与酒精类的多尺度、诊断、消融、计数模型与暴露量结果 |
-| `.../results/{drug_alcohol_temporal.csv,drug_alcohol_temporal_bootstrap.csv}` | 时间窗切分与配对 bootstrap |
-| `.../results/e13_格网构建bug修正记录.md`、`e13_fix_summary.json`、`e13_fix_verification.csv` | 格网构建 bug 的修正记录与逐格网核对结果 |
-| `experiments/E11_scenario_simulation/results/scenario_summary.csv` | 情景模拟主结果（两城 × 情景 × 方法 × 逐算法） |
-| `.../results/scenario_results_raw.csv` | 15 个模型实现的逐次结果 |
-| `.../results/figures/fig_scenario_effects.png`、`fig_scenario_main.png` | 情景效应图（三面板 / 正文两面板） |
+| `experiments/E01_multiscale_buffer/results/multiscale_summary.csv` | Grid counts, zero ratios and random / spatially blocked / temporal AUC for both cities across the 100-500 m radii. |
+| `experiments/E01_multiscale_buffer/results/algo_scale_table.csv` | Full metrics for three algorithms across five radii (including PR-AUC, Brier score and top-k hit rates). |
+| `experiments/E01_multiscale_buffer/results/ablation_scale_table.csv` | Seven ablation groups by city and radius, plus the paired bootstrap comparison of the full model against the history-only baseline. |
+| `experiments/E01_multiscale_buffer/results/count_model_comparison.csv` | Two-stage hurdle model compared with Poisson, negative binomial, ZIP, ZINB and single-stage tree models. |
+| `experiments/E01_multiscale_buffer/results/exposure_second_stage.csv` | Stage-2 R2 / MAE for count targets and for road-density-adjusted rate targets. |
+| `experiments/E01_multiscale_buffer/results/diagnostics_scale_table.csv` | Residual Moran's I, top-k hit rates and cross-fold SHAP rank stability. |
+| `experiments/E01_multiscale_buffer/results/figures/*.csv`, `*.png` | Data points and figures for the calibration and precision-recall curves. |
+| `experiments/E13_split_categories/results/split_targets_r300.csv` (plus `_withcoords` and `.json`) | Full metrics for the two split targets under the main feature set and under a feature set that also keeps the raw coordinates. |
+| `experiments/E13_split_categories/results/drug_alcohol_multiscale.csv`, `..._robustness.csv` | Multi-scale and robustness results for the drugs and alcohol target. |
+| `experiments/E13_split_categories/results/drug_alcohol_diagnostics.csv`, `..._full_diagnostics.csv` | Residual Moran's I, hit rates and SHAP stability for the split target. |
+| `experiments/E13_split_categories/results/drug_alcohol_ablation.csv`, `..._count_models.csv`, `..._exposure.csv` | Ablation, count-model comparison and exposure adjustment for the split target. |
+| `experiments/E13_split_categories/results/drug_alcohol_temporal.csv`, `..._temporal_bootstrap.csv` | Temporal-window split and paired bootstrap for the split target. |
+| `experiments/E13_split_categories/results/e13_fix_summary.json`, `e13_fix_verification.csv`, `e13_格网构建bug修正记录.md` | Record of two grid-construction bugs and the cell-by-cell verification after the fix (historical note, written in Chinese). |
+| `experiments/E11_scenario_simulation/results/scenario_summary.csv` | Main scenario results (city x scenario x method, including per-algorithm values and confidence intervals). |
+| `experiments/E11_scenario_simulation/results/scenario_results_raw.csv` | The 15 individual model implementations. |
+| `experiments/E11_scenario_simulation/results/figures/fig_scenario_main.png`, `fig_scenario_effects.png` | Scenario effect figures (two-panel main figure and three-panel overview). |
 
-## 3. 逐文件清单（自动生成）
+Every table above is regenerated by the scripts described in `README.md` section 3.
 
-| 文件 | 行数 | 列数 | 前若干列 |
+## 3. File inventory
+
+| File | Rows | Columns | First columns |
 | --- | --- | --- | --- |
 | `experiments/E01_multiscale_buffer/data/hk_cells_r100.csv` | 4431 | 37 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, event_count, y_2014... |
 | `experiments/E01_multiscale_buffer/data/hk_cells_r200.csv` | 10516 | 37 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, event_count, y_2014... |
@@ -132,12 +135,12 @@
 | `experiments/E11_scenario_simulation/results/ny_cells_violent_r300.csv` | 26375 | 26 | school_id, cell_x, cell_y, dist_to_school, y_violent, school_lon, school_lat, ratio_Enclosure_degree_r300... |
 | `experiments/E11_scenario_simulation/results/scenario_results_raw.csv` | 330 | 16 | city, target, scenario, method, algo, seed, n_test, n_cells_affected... |
 | `experiments/E11_scenario_simulation/results/scenario_summary.csv` | 22 | 21 | city, scenario, method, delta_pct, delta_pct_min, delta_pct_max, share_cells_reduced, delta_pct_extensive... |
-| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r100.csv` | 4155 | 56 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, y_drug_alcohol, y_traffic... |
-| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r200.csv` | 14374 | 56 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, y_drug_alcohol, y_traffic... |
+| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r100.csv` | 4155 | 27 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, y_drug_alcohol, y_traffic... |
+| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r200.csv` | 14374 | 27 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, y_drug_alcohol, y_traffic... |
 | `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r300.csv` | 26375 | 27 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, y_drug_alcohol, y_traffic... |
-| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r400.csv` | 37617 | 56 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, y_drug_alcohol, y_traffic... |
-| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r500.csv` | 47147 | 56 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, y_drug_alcohol, y_traffic... |
-| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_year_r300.csv` | 26375 | 46 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, y_drug_alcohol, y_traffic... |
+| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r400.csv` | 37617 | 27 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, y_drug_alcohol, y_traffic... |
+| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_r500.csv` | 47147 | 27 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, y_drug_alcohol, y_traffic... |
+| `experiments/E13_split_categories/data/ny_cells_drug_alcohol_year_r300.csv` | 26375 | 46 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, count_2006, count_2007... |
 | `experiments/E13_split_categories/data/ny_cells_split_r300.csv` | 26375 | 27 | school_id, cell_x, cell_y, dist_to_school, school_lon, school_lat, y_drug_alcohol, y_traffic... |
 | `experiments/E13_split_categories/results/drug_alcohol_ablation.csv` | 5 | 8 | AUC, PR_AUC, Recall, n_test, R2_pos, MAE_pos, group, n_features |
 | `experiments/E13_split_categories/results/drug_alcohol_count_models.csv` | 6 | 8 | model, MAE, RMSE, Poisson_deviance, city, radius, n_train, n_test |
@@ -152,3 +155,28 @@
 | `experiments/E13_split_categories/results/split_targets_r300.csv` | 2 | 10 | target, cells, zero_ratio, pos_rate, AUC, PR_AUC, Recall, R2_pos... |
 | `experiments/E13_split_categories/results/split_targets_r300_full.csv` | 2 | 14 | AUC, PR_AUC, Recall, n_test, R2_pos, MAE_pos, target, label... |
 | `experiments/E13_split_categories/results/split_targets_r300_withcoords.csv` | 2 | 10 | target, cells, zero_ratio, pos_rate, AUC, PR_AUC, Recall, R2_pos... |
+
+### Other artifacts
+
+| File |
+| --- |
+| `experiments/E01_multiscale_buffer/results/figures/hk_curves_r100_full.png` |
+| `experiments/E01_multiscale_buffer/results/figures/hk_curves_r200_full.png` |
+| `experiments/E01_multiscale_buffer/results/figures/hk_curves_r300_full.png` |
+| `experiments/E01_multiscale_buffer/results/figures/hk_curves_r400_full.png` |
+| `experiments/E01_multiscale_buffer/results/figures/hk_curves_r500_full.png` |
+| `experiments/E01_multiscale_buffer/results/figures/ny_curves_r100_full.png` |
+| `experiments/E01_multiscale_buffer/results/figures/ny_curves_r200_full.png` |
+| `experiments/E01_multiscale_buffer/results/figures/ny_curves_r300_drug_alcohol.png` |
+| `experiments/E01_multiscale_buffer/results/figures/ny_curves_r300_full.png` |
+| `experiments/E01_multiscale_buffer/results/figures/ny_curves_r400_full.png` |
+| `experiments/E01_multiscale_buffer/results/figures/ny_curves_r500_full.png` |
+| `experiments/E11_scenario_simulation/config.md` |
+| `experiments/E11_scenario_simulation/results/figures/fig_scenario_effects.png` |
+| `experiments/E11_scenario_simulation/results/figures/fig_scenario_main.png` |
+| `experiments/E11_scenario_simulation/results/scenario_manifest.json` |
+| `experiments/E11_scenario_simulation/results/scenario_note.md` |
+| `experiments/E13_split_categories/results/e13_fix_summary.json` |
+| `experiments/E13_split_categories/results/e13_格网构建bug修正记录.md` |
+| `experiments/E13_split_categories/results/split_targets_r300.json` |
+
