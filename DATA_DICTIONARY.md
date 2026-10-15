@@ -36,7 +36,7 @@ Exact row and column counts for every file are listed in section 3.
 | `experiments/E13_split_categories/results/drug_alcohol_diagnostics.csv`, `..._full_diagnostics.csv` | Residual Moran's I, hit rates and SHAP stability for the split target. |
 | `experiments/E13_split_categories/results/drug_alcohol_ablation.csv`, `..._count_models.csv`, `..._exposure.csv` | Ablation, count-model comparison and exposure adjustment for the split target. |
 | `experiments/E13_split_categories/results/drug_alcohol_temporal.csv`, `..._temporal_bootstrap.csv` | Temporal-window split and paired bootstrap for the split target. |
-| `experiments/E13_split_categories/results/e13_fix_summary.json`, `e13_fix_verification.csv`, `e13_grid_construction_bug_fix_log.md` | Record of two grid-construction bugs and the cell-by-cell verification after the fix (historical note, written in Chinese). |
+| `experiments/E13_split_categories/results/e13_fix_summary.json`, `e13_fix_verification.csv`, `e13_grid_construction_bug_fix_log.md` | Record of two grid-construction bugs and the cell-by-cell verification after the fix. |
 | `experiments/E11_scenario_simulation/results/scenario_summary.csv` | Main scenario results (city x scenario x method, including per-algorithm values and confidence intervals). |
 | `experiments/E11_scenario_simulation/results/scenario_results_raw.csv` | The 15 individual model implementations. |
 | `experiments/E11_scenario_simulation/results/figures/fig_scenario_main.png`, `fig_scenario_effects.png` | Scenario effect figures (two-panel main figure and three-panel overview). |
